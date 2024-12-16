@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Расходы{% endblock %}
+
+{% block content %}
+<h1>Расходы</h1>
+<ul>
+    {% for expense in expenses %}
+        <li>{{ expense.amount }}₽ - {{ expense.date|date:"d-m-Y H:i" }} ({{ expense.category }})</li>
+    {% endfor %}
+</ul>
+<a href="/expenses/add">Добавить расход</a>
+{% endblock %}
