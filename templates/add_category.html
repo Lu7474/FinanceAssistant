@@ -3,11 +3,13 @@
 {% block title %}Добавить категорию{% endblock %}
 
 {% block content %}
-<h1>Добавить категорию</h1>
-<form action="/categories/add" method="post">
+<h1 class="text-center my-4">Добавить категорию</h1>
+<form action="/categories/add" method="post" class="shadow p-4 mb-5 bg-white rounded">
     {% csrf_token %}
-    <label for="title">Название категории:</label>
-    <input type="text" id="title" name="title" required>
-    <button type="submit">Добавить</button>
+    <div class="mb-3">
+        <label for="title" class="form-label">Название категории:</label>
+        <input type="text" id="title" name="title" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Добавить</button>
 </form>
 {% endblock %}

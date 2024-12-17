@@ -3,8 +3,15 @@ from .models import Category, Expense, Income
 
 
 def index(request):
-    context = {}
-    return render(request, "base.html", context)
+    categories = Category.objects.all()
+    expenses = Expense.objects.all()
+    incomes = Income.objects.all()
+    context = {
+        "categories": categories,
+        "expenses": expenses,
+        "incomes": incomes,
+    }
+    return render(request, "index.html", context)
 
 
 def category_view(request):
@@ -13,7 +20,7 @@ def category_view(request):
 
 
 def category_add(request):
-    if request.method == "POST":
+    if request.POST:
         title = request.POST.get("title")
         if title:
             Category.objects.create(title=title)
@@ -28,13 +35,12 @@ def expense_view(request):
 
 
 def expense_add(request):
-    if request.method == "POST":
+    if request.POST:
         amount = request.POST.get("amount")
         category_id = request.POST.get("category")
-        date = request.POST.get("date")
-        if amount and category_id and date:
+        if amount and category_id:
             category = Category.objects.get(id=category_id)
-            Expense.objects.create(amount=amount, category=category, date=date)
+            Expense.objects.create(amount=amount, category=category)
             return redirect("expense_view")
 
     categories = Category.objects.all()
@@ -47,14 +53,31 @@ def income_view(request):
 
 
 def income_add(request):
-    if request.method == "POST":
+    if request.POST:
         amount = request.POST.get("amount")
         category_id = request.POST.get("category")
-        date = request.POST.get("date")
-        if amount and category_id and date:
+        if amount and category_id:
             category = Category.objects.get(id=category_id)
-            Income.objects.create(amount=amount, category=category, date=date)
+            Income.objects.create(amount=amount, category=category)
             return redirect("income_view")
 
     categories = Category.objects.all()
     return render(request, "add_income.html", {"categories": categories})
+
+
+def category_del(request, id=None):
+    if id and request.POST:
+        Category.objects.filter(id=id).delete()
+    return redirect("category_view")
+
+
+def expense_del(request, id=None):
+    if id and request.POST:
+        Expense.objects.filter(id=id).delete()
+    return redirect("expense_view")
+
+
+def income_del(request, id=None):
+    if id and request.POST:
+        Income.objects.filter(id=id).delete()
+    return redirect("income_view")

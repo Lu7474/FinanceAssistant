@@ -3,11 +3,25 @@
 {% block title %}Доходы{% endblock %}
 
 {% block content %}
-<h1>Доходы</h1>
-<ul>
-    {% for income in incomes %}
-        <li>{{ income.amount }}₽ - {{ income.date|date:"d-m-Y H:i" }} ({{ income.category }})</li>
-    {% endfor %}
-</ul>
-<a href="/income/add">Добавить доход</a>
+<h1 class="text-center my-4">Доходы</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for income in incomes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ income.amount }}₽</span>
+                <span class="text-muted">{{ income.date|date:"d-m-Y H:i" }}</span>
+                <span class="text-light-emphasis">{{ income.category.title }}</span>
+                <form method="POST" action="{% url 'income_del' income.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark">Удалить</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="text-center mt-4">
+    <a href="/income/add" class="btn btn-success">Добавить доход</a>
+</div>
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Все данные{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">Все данные</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2>Категории</h2>
+        <ul class="list-group list-group-flush">
+            {% for category in categories %}
+            <li class="list-group-item">{{ category.title }}
+
+            </li>
+            {% endfor %}
+        </ul>
+        <h2 class="mt-4">Доходы</h2>
+        <ul class="list-group list-group-flush">
+            {% for income in incomes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ income.amount }}₽</span>
+                <span class="text-muted">{{ income.date|date:"d-m-Y H:i" }}</span>
+                <span class="text-light-emphasis">{{ income.category.title }}</span>
+
+            </li>
+            {% endfor %}
+        </ul>
+        <h2 class="mt-4">Расходы</h2>
+        <ul class="list-group list-group-flush">
+            {% for expense in expenses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ expense.amount }}₽</span>
+                <span class="text-muted">{{ expense.date|date:"d-m-Y H:i" }}</span>
+                <span class="text-light-emphasis">{{ expense.category.title }}</span>
+
+            </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+</div>
+<br>
+<br>
+{% endblock %}

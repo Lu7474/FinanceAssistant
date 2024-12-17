@@ -3,11 +3,25 @@
 {% block title %}Расходы{% endblock %}
 
 {% block content %}
-<h1>Расходы</h1>
-<ul>
-    {% for expense in expenses %}
-        <li>{{ expense.amount }}₽ - {{ expense.date|date:"d-m-Y H:i" }} ({{ expense.category }})</li>
-    {% endfor %}
-</ul>
-<a href="/expenses/add">Добавить расход</a>
+<h1 class="text-center my-4">Расходы</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for expense in expenses %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">{{ expense.amount }}₽</span>
+                    <span class="text-muted">{{ expense.date|date:"d-m-Y H:i" }}</span>
+                    <span class="text-light-emphasis">{{ expense.category.title }}</span>
+                    <form method="POST" action="{% url 'expense_del' expense.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-dark">Удалить</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="text-center mt-4">
+    <a href="/expenses/add" class="btn btn-success">Добавить расход</a>
+</div>
 {% endblock %}
