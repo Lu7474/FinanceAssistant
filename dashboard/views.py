@@ -1,15 +1,22 @@
 from django.shortcuts import render, redirect
 from .models import Category, Expense, Income
+from django.db.models import Sum
 
 
 def index(request):
     categories = Category.objects.all()
     expenses = Expense.objects.all()
     incomes = Income.objects.all()
+    sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
+    total_inc = sum_inc["total_inc"]
+    sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
+    total_exp = sum_exp["total_exp"]
     context = {
         "categories": categories,
         "expenses": expenses,
         "incomes": incomes,
+        "total_exp": total_exp,
+        "total_inc": total_inc,
     }
     return render(request, "index.html", context)
 
@@ -31,7 +38,13 @@ def category_add(request):
 
 def expense_view(request):
     expenses = Expense.objects.all()
-    return render(request, "expenses.html", {"expenses": expenses})
+    sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
+    total_exp = sum_exp["total_exp"]
+    context = {
+        "expenses": expenses,
+        "total_exp": total_exp,
+    }
+    return render(request, "expenses.html", context)
 
 
 def expense_add(request):
@@ -49,7 +62,13 @@ def expense_add(request):
 
 def income_view(request):
     incomes = Income.objects.all()
-    return render(request, "income.html", {"incomes": incomes})
+    sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
+    total_inc = sum_inc["total_inc"]
+    context = {
+        "incomes": incomes,
+        "total_inc": total_inc,
+    }
+    return render(request, "income.html", context)
 
 
 def income_add(request):
@@ -81,3 +100,7 @@ def income_del(request, id=None):
     if id and request.POST:
         Income.objects.filter(id=id).delete()
     return redirect("income_view")
+
+
+def expense_sum(request):
+    pass

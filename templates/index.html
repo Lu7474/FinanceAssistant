@@ -16,6 +16,7 @@
         </ul>
         <h2 class="mt-4">Доходы</h2>
         <ul class="list-group list-group-flush">
+            <span class="fw-bold">Всего доходов: {{ total_inc }}₽</span>
             {% for income in incomes %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="fw-bold">{{ income.amount }}₽</span>
@@ -27,6 +28,7 @@
         </ul>
         <h2 class="mt-4">Расходы</h2>
         <ul class="list-group list-group-flush">
+            <span class="fw-bold">Всего расходов: {{ total_exp }}₽</span>
             {% for expense in expenses %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="fw-bold">{{ expense.amount }}₽</span>

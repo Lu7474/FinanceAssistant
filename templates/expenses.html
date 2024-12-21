@@ -7,6 +7,8 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <ul class="list-group list-group-flush">
+            <span class="fw-bold">Всего расходов: {{ total_exp }}₽</span>
+
             {% for expense in expenses %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <span class="fw-bold">{{ expense.amount }}₽</span>

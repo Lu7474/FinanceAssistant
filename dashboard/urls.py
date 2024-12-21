@@ -21,7 +21,7 @@ urlpatterns = [
     path("expenses/add", expense_add, name="add_expense"),
     path("income", income_view, name="income_view"),
     path("income/add", income_add, name="add_income"),
-    path("categories/<int:id>", category_del, name="category_del"),
-    path("expenses/<int:id>", expense_del, name="expense_del"),
-    path("income/<int:id>", income_del, name="income_del"),
+    path("categories/del/<int:id>", category_del, name="category_del"),
+    path("expenses/del/<int:id>", expense_del, name="expense_del"),
+    path("income/del/<int:id>", income_del, name="income_del"),
 ]
