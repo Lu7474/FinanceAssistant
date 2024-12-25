@@ -3,17 +3,49 @@
 {% block title %}Категории{% endblock %}
 
 {% block content %}
-<h1 class="text-center my-4">Категории</h1>
+<br>
+<br>
 <div class="card shadow-sm">
     <div class="card-body">
         <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bold">{{ category.title }}</span>
+                <h3><span class="fw-bold">Категория: {{ category.title }}</span></h3>
             </li>
+        </ul>
+        <h2 class="mt-4">Доходы</h2>
+        <ul class="list-group list-group-flush">
+            <span class="fw-bold">Всего доходов: {{ total_inc }}₽</span>
+            {% for income in incomes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ income.amount }}₽</span>
+                <span class="text-muted">{{ income.date|date:"d-m-Y H:i" }}</span>
+                <span class="text-light-emphasis">{{ income.category.title }}</span>
+                <form method="POST" action="{% url 'income_del' income.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark">Удалить</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        <h2 class="mt-4">Расходы</h2>
+        <ul class="list-group list-group-flush">
+            <span class="fw-bold">Всего расходов: {{ total_exp }}₽</span>
+            {% for expense in expenses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ expense.amount }}₽</span>
+                <span class="text-muted">{{ expense.date|date:"d-m-Y H:i" }}</span>
+                <span class="text-light-emphasis">{{ expense.category.title }}</span>
+                <form method="POST" action="{% url 'expense_del' expense.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark">Удалить</button>
+                </form>
+            </li>
+            {% endfor %}
+        
         </ul>
     </div>
 </div>
 <div class="text-center mt-4">
-    <a href="/index" class="btn btn-success">Назад</a>
+    <a href="/" class="btn btn-success">Назад</a>
 </div>
 {% endblock %}

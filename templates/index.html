@@ -9,8 +9,8 @@
         <h2>Категории</h2>
         <ul class="list-group list-group-flush">
             {% for category in categories %}
-            <li class="list-group-item">{{ category.title }}
-
+            <li class="list-group-item">
+                <span class="fw-bold"><a href={% url 'category_detail' category.id %}>{{ category.title }}</a></span>
             </li>
             {% endfor %}
         </ul>

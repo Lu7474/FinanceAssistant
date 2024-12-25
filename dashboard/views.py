@@ -31,7 +31,7 @@ def category_add(request):
     if request.POST:
         title = request.POST.get("title")
         if title:
-            Category.objects.create(title=title)
+            Category.objects.create(title=title, author=request.user)
             return redirect("category_view")
 
     return render(request, "add_category.html")
@@ -54,7 +54,9 @@ def expense_add(request):
         category_id = request.POST.get("category")
         if amount and category_id:
             category = Category.objects.get(id=category_id)
-            Expense.objects.create(amount=amount, category=category)
+            Expense.objects.create(
+                amount=amount, category=category, author=request.user
+            )
             return redirect("expense_view")
 
     categories = Category.objects.filter(author=request.user)
@@ -78,7 +80,7 @@ def income_add(request):
         category_id = request.POST.get("category")
         if amount and category_id:
             category = Category.objects.get(id=category_id)
-            Income.objects.create(amount=amount, category=category)
+            Income.objects.create(amount=amount, category=category, author=request.user)
             return redirect("income_view")
 
     categories = Category.objects.filter(author=request.user)
@@ -107,4 +109,25 @@ class CategoryDetailView(DetailView):
     model = Category
     template_name = "detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        category = self.object
+
+        sum_exp = Expense.objects.filter(category=category).aggregate(
+            total_exp=Sum("amount")
+        )
+        total_exp = sum_exp["total_exp"] or 0
+
+        sum_inc = Income.objects.filter(category=category).aggregate(
+            total_inc=Sum("amount")
+        )
+        total_inc = sum_inc["total_inc"] or 0
+
+        category = self.object
+        context["expenses"] = Expense.objects.filter(category=category)
+        context["total_exp"] = total_exp
+        context["incomes"] = Income.objects.filter(category=category)
+        context["total_inc"] = total_inc
+
+        return context
