@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Категории{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">Категории</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ category.title }}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="text-center mt-4">
+    <a href="/index" class="btn btn-success">Назад</a>
+</div>
+{% endblock %}

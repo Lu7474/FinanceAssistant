@@ -1,12 +1,13 @@
+from django.views.generic import DetailView
 from django.shortcuts import render, redirect
 from .models import Category, Expense, Income
 from django.db.models import Sum
 
 
 def index(request):
-    categories = Category.objects.all()
-    expenses = Expense.objects.all()
-    incomes = Income.objects.all()
+    categories = Category.objects.filter(author=request.user)
+    expenses = Expense.objects.filter(author=request.user)
+    incomes = Income.objects.filter(author=request.user)
     sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
     total_inc = sum_inc["total_inc"]
     sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
@@ -22,7 +23,7 @@ def index(request):
 
 
 def category_view(request):
-    categories = Category.objects.all()
+    categories = Category.objects.filter(author=request.user)
     return render(request, "categories.html", {"categories": categories})
 
 
@@ -37,7 +38,7 @@ def category_add(request):
 
 
 def expense_view(request):
-    expenses = Expense.objects.all()
+    expenses = Expense.objects.filter(author=request.user)
     sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
     total_exp = sum_exp["total_exp"]
     context = {
@@ -56,12 +57,12 @@ def expense_add(request):
             Expense.objects.create(amount=amount, category=category)
             return redirect("expense_view")
 
-    categories = Category.objects.all()
+    categories = Category.objects.filter(author=request.user)
     return render(request, "add_expense.html", {"categories": categories})
 
 
 def income_view(request):
-    incomes = Income.objects.all()
+    incomes = Income.objects.filter(author=request.user)
     sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
     total_inc = sum_inc["total_inc"]
     context = {
@@ -80,7 +81,7 @@ def income_add(request):
             Income.objects.create(amount=amount, category=category)
             return redirect("income_view")
 
-    categories = Category.objects.all()
+    categories = Category.objects.filter(author=request.user)
     return render(request, "add_income.html", {"categories": categories})
 
 
@@ -102,5 +103,8 @@ def income_del(request, id=None):
     return redirect("income_view")
 
 
-def expense_sum(request):
-    pass
+class CategoryDetailView(DetailView):
+    model = Category
+    template_name = "detail.html"
+
+

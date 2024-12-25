@@ -11,6 +11,7 @@ from .views import (
     category_del,
     expense_del,
     income_del,
+    CategoryDetailView,
 )
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path("categories/del/<int:id>", category_del, name="category_del"),
     path("expenses/del/<int:id>", expense_del, name="expense_del"),
     path("income/del/<int:id>", income_del, name="income_del"),
+    path("<int:pk>", CategoryDetailView.as_view(), name="category_detail"),
 ]
