@@ -5,13 +5,19 @@ from django.db.models import Sum
 
 
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect("users/login/")
     categories = Category.objects.filter(author=request.user)
     expenses = Expense.objects.filter(author=request.user)
     incomes = Income.objects.filter(author=request.user)
-    sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
-    total_inc = sum_inc["total_inc"]
-    sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
-    total_exp = sum_exp["total_exp"]
+    sum_inc = Income.objects.filter(author=request.user).aggregate(
+        total_inc=Sum("amount")
+    )
+    total_inc = sum_inc["total_inc"] or 0
+    sum_exp = Expense.objects.filter(author=request.user).aggregate(
+        total_exp=Sum("amount")
+    )
+    total_exp = sum_exp["total_exp"] or 0
     context = {
         "categories": categories,
         "expenses": expenses,
@@ -39,8 +45,10 @@ def category_add(request):
 
 def expense_view(request):
     expenses = Expense.objects.filter(author=request.user)
-    sum_exp = Expense.objects.aggregate(total_exp=Sum("amount"))
-    total_exp = sum_exp["total_exp"]
+    sum_exp = Expense.objects.filter(author=request.user).aggregate(
+        total_exp=Sum("amount")
+    )
+    total_exp = sum_exp["total_exp"] or 0
     context = {
         "expenses": expenses,
         "total_exp": total_exp,
@@ -65,8 +73,10 @@ def expense_add(request):
 
 def income_view(request):
     incomes = Income.objects.filter(author=request.user)
-    sum_inc = Income.objects.aggregate(total_inc=Sum("amount"))
-    total_inc = sum_inc["total_inc"]
+    sum_inc = Income.objects.filter(author=request.user).aggregate(
+        total_inc=Sum("amount")
+    )
+    total_inc = sum_inc["total_inc"] or 0
     context = {
         "incomes": incomes,
         "total_inc": total_inc,
@@ -113,21 +123,22 @@ class CategoryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         category = self.object
+        user = self.request.user
 
-        sum_exp = Expense.objects.filter(category=category).aggregate(
+        sum_exp = Expense.objects.filter(category=category, author=user).aggregate(
             total_exp=Sum("amount")
         )
         total_exp = sum_exp["total_exp"] or 0
 
-        sum_inc = Income.objects.filter(category=category).aggregate(
+        sum_inc = Income.objects.filter(category=category, author=user).aggregate(
             total_inc=Sum("amount")
         )
         total_inc = sum_inc["total_inc"] or 0
 
         category = self.object
-        context["expenses"] = Expense.objects.filter(category=category)
+        context["expenses"] = Expense.objects.filter(category=category, author=user)
         context["total_exp"] = total_exp
-        context["incomes"] = Income.objects.filter(category=category)
+        context["incomes"] = Income.objects.filter(category=category, author=user)
         context["total_inc"] = total_inc
 
         return context
