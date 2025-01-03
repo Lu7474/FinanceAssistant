@@ -117,3 +117,5 @@ AUTH_USER_MODEL = 'users.User'
 
 LOGIN_REDIRECT_URL = "index"
 LOGOUT_REDIRECT_URL = "login"
+
+LOGIN_URL = "login"

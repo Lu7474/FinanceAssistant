@@ -1,21 +1,13 @@
-from django.views.generic import DetailView
-from django.http import HttpResponseServerError
 from django.db import DatabaseError
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Category, Expense, Income
 from django.db.models import Sum
+from django.http import HttpResponseServerError
+from django.shortcuts import get_object_or_404, redirect, render
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
 
-def user_registered(func):
-    def registered(request, *args, **kwargs):
-        try:
-            if not request.user.is_authenticated:
-                return redirect("/users/login/")
-            return func(request, *args, **kwargs)
-        except AttributeError:
-            return HttpResponseServerError("Ошибка: пользователь не определен.")
-
-    return registered
+from .models import Category, Expense, Income
 
 
 def get_totals(user, model, filter_params=None):
@@ -29,7 +21,7 @@ def get_totals(user, model, filter_params=None):
         return None, 0
 
 
-@user_registered
+@login_required
 def index(request):
     categories = Category.objects.filter(author=request.user).select_related("author")
     expenses, total_exp = get_totals(request.user, Expense)
@@ -44,13 +36,13 @@ def index(request):
     return render(request, "index.html", context)
 
 
-@user_registered
+@login_required
 def category_view(request):
     categories = Category.objects.filter(author=request.user).select_related("author")
     return render(request, "categories.html", {"categories": categories})
 
 
-@user_registered
+@login_required
 def category_add(request):
     if request.POST:
         title = request.POST.get("title")
@@ -60,14 +52,14 @@ def category_add(request):
     return render(request, "add_category.html")
 
 
-@user_registered
+@login_required
 def expense_view(request):
     expenses, total_exp = get_totals(request.user, Expense)
     context = {"expenses": expenses, "total_exp": total_exp}
     return render(request, "expenses.html", context)
 
 
-@user_registered
+@login_required
 def expense_add(request):
     if request.POST:
         amount = request.POST.get("amount")
@@ -83,14 +75,14 @@ def expense_add(request):
     return render(request, "add_expense.html", {"categories": categories})
 
 
-@user_registered
+@login_required
 def income_view(request):
     incomes, total_inc = get_totals(request.user, Income)
     context = {"incomes": incomes, "total_inc": total_inc}
     return render(request, "income.html", context)
 
 
-@user_registered
+@login_required
 def income_add(request):
     if request.POST:
         amount = request.POST.get("amount")
@@ -104,7 +96,7 @@ def income_add(request):
     return render(request, "add_income.html", {"categories": categories})
 
 
-@user_registered
+@login_required
 def delete_item(request, model, redirect_url, id=None):
     try:
         if id and request.POST:
@@ -115,22 +107,22 @@ def delete_item(request, model, redirect_url, id=None):
         return HttpResponseServerError("Не удалось удалить запись.")
 
 
-@user_registered
+@login_required
 def category_del(request, id=None):
     return delete_item(request, Category, "category_view", id)
 
 
-@user_registered
+@login_required
 def expense_del(request, id=None):
     return delete_item(request, Expense, "expense_view", id)
 
 
-@user_registered
+@login_required
 def income_del(request, id=None):
     return delete_item(request, Income, "income_view", id)
 
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(LoginRequiredMixin, DetailView):
     queryset = Category.objects.select_related("author")
     template_name = "detail.html"
 
