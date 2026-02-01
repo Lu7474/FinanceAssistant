@@ -14,7 +14,7 @@
 
 ## Технологии
 
-- Python 3.x
+- Python 3.9
 - Django 4.2
 - SQLite3
 - Bootstrap 5.3
